@@ -1,39 +1,19 @@
-def solution(p):
+def solution(p:str) -> str:
     if len(p) == 0:
         return p
     u,v = splitTwoWords(p)
 
-    if isValidWord(u):
+    if u[0] == '(': 
         return u + solution(v)
 
     answer = '('
     answer += solution(v)
     answer += ')'
-    substr = list(u[1:-1])
-    for i in range(len(substr)):
-        if substr[i] == ')':
-            substr[i] = '('
-        else:
-            substr[i] = ')'
+    substr = [')' if uu == '(' else '(' for uu in u[1:-1]]
     answer += ''.join(substr)
     return answer
 
-
-def isValidWord(u):
-    stack = []
-    try:
-        for uu in u:
-            if uu == '(':
-                stack.append(uu)
-            else:
-                stack.pop() #')'
-
-    except IndexError:
-        return False
-
-    return True
-
-def splitTwoWords(p):
+def splitTwoWords(p:str) -> tuple[str, str]:
     first = p[0]
     stack = []
     for i in range(len(p)):
