@@ -14,9 +14,9 @@ class Trie:
             node = node.children[ch] 
         node.isEnd = True
 
-    def find(self, key):
+    def find(self, prefix):
         node = self
-        for ch in key:
+        for ch in prefix:
             node = node.children.get(ch)
             if node is None: break
         return node
@@ -53,17 +53,16 @@ def solution(words, queries):
         count = 0
         try:
             if q[0] != '?':
-                index = q.index('?')
-                target = wordsByLength[len(q)].find(q[:index])
+                substr = q.split('?')[0]
+                target = wordsByLength[len(q)].find(substr)
                 target.countAllLeaves()
             else:
-                index = q[::-1].index('?')
-                target = wordsByLengthReverse[len(q)].find(q[:index+2:-1])
+                substr = q[::-1].split('?')[0]
+                target = wordsByLengthReverse[len(q)].find(substr)
                 target.countAllLeaves()
         except KeyError:
             pass
-        except AttributeError: #TODO 
-            print('none')
+        except AttributeError:
             pass
 
         counter.append(count)
@@ -71,4 +70,4 @@ def solution(words, queries):
 
 
 print(solution(["frodo", "front", "frost", "frozen", "frame", "kakao"],\
-        ["fro??", "????o", "fr???", "fro???", "pro?"]))
+        ["fro??", "????o", "fr???", "fro???", "pro?", "??????"]))
