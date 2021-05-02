@@ -1,33 +1,25 @@
-count = 0
-
 class Trie:
     def __init__(self, isEnd=False):
         self.isEnd = isEnd
         self.children = {} # string:tries
+        self.nodesPassedBy = 0
 
     def insert(self, key):
         node = self
         for ch in key:
+            node.nodesPassedBy += 1
             child = node.children.get(ch)
             if child is None:
                 node.children[ch] = Trie()
             node = node.children[ch] 
         node.isEnd = True
 
-    def find(self, prefix):
+    def findAndCount(self, prefix):
         node = self
         for ch in prefix:
             node = node.children.get(ch)
-            if node is None: break
-        return node
-
-    def countAllLeaves(self):
-        global count
-        if self.isEnd:
-            count += 1
-
-        for trie in self.children.values():
-            trie.countAllLeaves()
+            if node is None: return 0 
+        return node.nodesPassedBy
 
 #    def printTrie(self):
 #        print(self.children.keys(), self.isEnd)
@@ -36,8 +28,6 @@ class Trie:
 
 
 def solution(words, queries):
-    global count 
-
     wordsByLength = {} # length:tries
     wordsByLengthReverse = {}
 
@@ -50,19 +40,23 @@ def solution(words, queries):
 
     counter = []
     for q in queries:
+        if '?'*len(q) == q:
+            targetDict = wordsByLength.get(len(q))
+            if targetDict is None:
+                counter.append(0)
+            else:
+                counter.append(targetDict.nodesPassedBy)
+            continue
+
         count = 0
         try:
             if q[0] != '?':
                 substr = q.split('?')[0]
-                target = wordsByLength[len(q)].find(substr)
-                target.countAllLeaves()
+                count = wordsByLength[len(q)].findAndCount(substr)
             else:
                 substr = q[::-1].split('?')[0]
-                target = wordsByLengthReverse[len(q)].find(substr)
-                target.countAllLeaves()
-        except KeyError:
-            pass
-        except AttributeError:
+                count = wordsByLengthReverse[len(q)].findAndCount(substr)
+        except Exception:
             pass
 
         counter.append(count)
@@ -70,4 +64,4 @@ def solution(words, queries):
 
 
 print(solution(["frodo", "front", "frost", "frozen", "frame", "kakao"],\
-        ["fro??", "????o", "fr???", "fro???", "pro?", "??????"]))
+        ["fro??", "????o", "fr???", "fro???", "pro?", "?????"]))
