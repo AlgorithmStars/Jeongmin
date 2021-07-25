@@ -47,7 +47,7 @@ def solution(n:int, build_frame:list[list]):
         for y, element in enumerate(line):
             if element[PILLAR]:
                 answer.append([x,y,PILLAR])
-            elif element[CROSSBEAM]:
+            if element[CROSSBEAM]:
                 answer.append([x,y,CROSSBEAM])
 
     return sorted(answer)
